@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Question } from '../types';
-import { ArrowRight, CheckCircle, Plus, Minus, ArrowLeft } from 'lucide-react';
+import { ArrowRight, CheckCircle, ArrowLeft } from 'lucide-react';
 
 interface QuestionScreenProps {
   question: Question;
@@ -88,6 +88,12 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
       <div className={`bg-white rounded-3xl shadow-2xl p-6 md:p-10 max-w-2xl w-full transition-all duration-300 relative ${
         isAnimating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
       }`}>
+        {/* Title */}
+        <div className="mb-4 text-center">
+          <h2 className={`text-2xl md:text-3xl font-extrabold tracking-tight ${question.operation === '+' ? 'text-blue-600' : 'text-red-600'}`}>
+            {question.operation === '+' ? 'Addition' : 'Subtraction'}
+          </h2>
+        </div>
         {/* Back Button */}
         <button
           onClick={onBack}
@@ -217,11 +223,11 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
             {/* Operation Row */}
             <div className="grid grid-cols-3 border-b-2 border-gray-400">
               <div className="border-r border-gray-300 p-4 text-center relative">
-                <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
+                <div className="absolute left-1 md:left-3 top-1/2 -translate-y-1/2 flex items-center justify-center">
                   {question.operation === '+' ? (
-                    <Plus className="w-8 h-8 text-blue-500" />
+                    <span className="block text-blue-600 font-extrabold drop-shadow-lg text-4xl md:text-5xl lg:text-6xl leading-none select-none" style={{ WebkitTextStroke: '2px #fff' }}>+</span>
                   ) : (
-                    <Minus className="w-8 h-8 text-red-500" />
+                    <span className="block text-red-600 font-extrabold drop-shadow-lg text-4xl md:text-5xl lg:text-6xl leading-none select-none" style={{ WebkitTextStroke: '2px #fff' }}>−</span>
                   )}
                 </div>
                 <div className="w-12 h-12 border-2 border-gray-300 rounded flex items-center justify-center mx-auto bg-blue-50">
