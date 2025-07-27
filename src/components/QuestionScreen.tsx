@@ -225,9 +225,19 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
               <div className="border-r border-gray-300 p-4 text-center relative">
                 <div className="absolute left-1 md:left-3 top-1/2 -translate-y-1/2 flex items-center justify-center">
                   {question.operation === '+' ? (
-                    <span className="block text-blue-600 font-extrabold drop-shadow-lg text-4xl md:text-5xl lg:text-6xl leading-none select-none" style={{ WebkitTextStroke: '2px #fff' }}>+</span>
+                    <span
+                      className="block text-blue-600 font-extrabold drop-shadow-lg text-4xl md:text-5xl lg:text-6xl leading-none select-none md:stroke-white md:stroke-2"
+                      style={{ WebkitTextStroke: undefined }}
+                    >
+                      +
+                    </span>
                   ) : (
-                    <span className="block text-red-600 font-extrabold drop-shadow-lg text-4xl md:text-5xl lg:text-6xl leading-none select-none" style={{ WebkitTextStroke: '2px #fff' }}>−</span>
+                    <span
+                      className="block text-red-600 font-extrabold drop-shadow-lg text-4xl md:text-5xl lg:text-6xl leading-none select-none md:stroke-white md:stroke-2"
+                      style={{ WebkitTextStroke: undefined }}
+                    >
+                      −
+                    </span>
                   )}
                 </div>
                 <div className="w-12 h-12 border-2 border-gray-300 rounded flex items-center justify-center mx-auto bg-blue-50">
