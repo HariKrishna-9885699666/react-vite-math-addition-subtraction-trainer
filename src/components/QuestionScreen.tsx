@@ -70,12 +70,18 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
   const isValidInput = onesInput !== '' && (tensInput !== '' || question.num1 < 10) && 
                       (hundredsInput !== '' || question.num1 < 100);
 
-  const handleInputChange = (value: string, setter: (val: string) => void) => {
-    // Only allow single digits
-    if (value === '' || (/^\d$/.test(value))) {
-      setter(value);
+
+  // Helper for up/down buttons (for answer digits)
+  const handleDigitChange = (value: string, setter: (val: string) => void, direction: 'up' | 'down') => {
+    let num = value === '' ? 0 : parseInt(value, 10);
+    if (direction === 'up') {
+      num = (num + 1) % 10;
+    } else {
+      num = (num - 1 + 10) % 10;
     }
+    setter(num.toString());
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -111,31 +117,60 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
         {/* Place Value Table */}
         <div className="mb-8">
           <div className="bg-white border-2 border-gray-400 rounded-lg overflow-hidden mx-auto max-w-md">
-            {/* Carry Row */}
+            {/* Carry Row with Up/Down Buttons */}
             <div className="grid grid-cols-3 bg-gray-50 border-b border-gray-300">
-              <div className="border-r border-gray-300 p-2 text-center">
+              {/* Carry Hundreds */}
+              <div className="border-r border-gray-300 p-2 text-center flex flex-col items-center justify-center gap-0.5">
                 <div className="text-xs text-gray-500 mb-1">Carry</div>
-                <input
-                  type="text"
-                  value={carryHundreds}
-                  onChange={(e) => handleInputChange(e.target.value, setCarryHundreds)}
-                  className="w-8 h-8 border border-gray-300 rounded text-center text-sm font-bold focus:border-blue-500 focus:outline-none bg-white"
-                  maxLength={1}
-                  inputMode="numeric"
-                />
+                <button
+                  type="button"
+                  className="w-6 h-6 flex items-center justify-center bg-blue-100 rounded-full hover:bg-blue-200 mb-0.5"
+                  onClick={() => handleDigitChange(carryHundreds, setCarryHundreds, 'up')}
+                  tabIndex={-1}
+                  aria-label="Increase carry hundreds"
+                >
+                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+                </button>
+                <div className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center bg-white text-sm font-bold select-none">
+                  {carryHundreds || ''}
+                </div>
+                <button
+                  type="button"
+                  className="w-6 h-6 flex items-center justify-center bg-blue-100 rounded-full hover:bg-blue-200 mt-0.5"
+                  onClick={() => handleDigitChange(carryHundreds, setCarryHundreds, 'down')}
+                  tabIndex={-1}
+                  aria-label="Decrease carry hundreds"
+                >
+                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
               </div>
-              <div className="border-r border-gray-300 p-2 text-center">
+              {/* Carry Tens */}
+              <div className="border-r border-gray-300 p-2 text-center flex flex-col items-center justify-center gap-0.5">
                 <div className="text-xs text-gray-500 mb-1">Carry</div>
-                <input
-                  type="text"
-                  value={carryTens}
-                  onChange={(e) => handleInputChange(e.target.value, setCarryTens)}
-                  className="w-8 h-8 border border-gray-300 rounded text-center text-sm font-bold focus:border-blue-500 focus:outline-none bg-white"
-                  maxLength={1}
-                  inputMode="numeric"
-                />
+                <button
+                  type="button"
+                  className="w-6 h-6 flex items-center justify-center bg-blue-100 rounded-full hover:bg-blue-200 mb-0.5"
+                  onClick={() => handleDigitChange(carryTens, setCarryTens, 'up')}
+                  tabIndex={-1}
+                  aria-label="Increase carry tens"
+                >
+                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+                </button>
+                <div className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center bg-white text-sm font-bold select-none">
+                  {carryTens || ''}
+                </div>
+                <button
+                  type="button"
+                  className="w-6 h-6 flex items-center justify-center bg-blue-100 rounded-full hover:bg-blue-200 mt-0.5"
+                  onClick={() => handleDigitChange(carryTens, setCarryTens, 'down')}
+                  tabIndex={-1}
+                  aria-label="Decrease carry tens"
+                >
+                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
               </div>
-              <div className="p-2 text-center">
+              {/* Carry Ones (empty) */}
+              <div className="p-2 text-center flex flex-col items-center justify-center gap-0.5">
                 <div className="text-xs text-gray-500 mb-1">Carry</div>
                 <div className="w-8 h-8"></div>
               </div>
@@ -211,38 +246,79 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
               </div>
             </div>
 
-            {/* Answer Row */}
+            {/* Answer Row with Up/Down Buttons */}
             <div className="grid grid-cols-3 bg-yellow-50">
-              <div className="border-r border-gray-300 p-4 text-center">
-                <input
-                  type="text"
-                  value={hundredsInput}
-                  onChange={(e) => handleInputChange(e.target.value, setHundredsInput)}
-                  className="w-12 h-12 border-2 border-gray-400 rounded text-center text-2xl font-bold focus:border-blue-500 focus:outline-none bg-white"
-                  maxLength={1}
-                  inputMode="numeric"
-                />
+              {/* Hundreds */}
+              <div className="border-r border-gray-300 p-4 text-center flex flex-col items-center justify-center gap-1">
+                <button
+                  type="button"
+                  className="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full hover:bg-blue-200 mb-1"
+                  onClick={() => handleDigitChange(hundredsInput, setHundredsInput, 'up')}
+                  tabIndex={-1}
+                  aria-label="Increase hundreds"
+                >
+                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+                </button>
+                <div className="w-12 h-12 border-2 border-gray-400 rounded flex items-center justify-center bg-white text-2xl font-bold select-none">
+                  {hundredsInput || ''}
+                </div>
+                <button
+                  type="button"
+                  className="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full hover:bg-blue-200 mt-1"
+                  onClick={() => handleDigitChange(hundredsInput, setHundredsInput, 'down')}
+                  tabIndex={-1}
+                  aria-label="Decrease hundreds"
+                >
+                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
               </div>
-              <div className="border-r border-gray-300 p-4 text-center">
-                <input
-                  type="text"
-                  value={tensInput}
-                  onChange={(e) => handleInputChange(e.target.value, setTensInput)}
-                  className="w-12 h-12 border-2 border-gray-400 rounded text-center text-2xl font-bold focus:border-blue-500 focus:outline-none bg-white"
-                  maxLength={1}
-                  inputMode="numeric"
-                />
+              {/* Tens */}
+              <div className="border-r border-gray-300 p-4 text-center flex flex-col items-center justify-center gap-1">
+                <button
+                  type="button"
+                  className="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full hover:bg-blue-200 mb-1"
+                  onClick={() => handleDigitChange(tensInput, setTensInput, 'up')}
+                  tabIndex={-1}
+                  aria-label="Increase tens"
+                >
+                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+                </button>
+                <div className="w-12 h-12 border-2 border-gray-400 rounded flex items-center justify-center bg-white text-2xl font-bold select-none">
+                  {tensInput || ''}
+                </div>
+                <button
+                  type="button"
+                  className="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full hover:bg-blue-200 mt-1"
+                  onClick={() => handleDigitChange(tensInput, setTensInput, 'down')}
+                  tabIndex={-1}
+                  aria-label="Decrease tens"
+                >
+                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
               </div>
-              <div className="p-4 text-center">
-                <input
-                  type="text"
-                  value={onesInput}
-                  onChange={(e) => handleInputChange(e.target.value, setOnesInput)}
-                  className="w-12 h-12 border-2 border-gray-400 rounded text-center text-2xl font-bold focus:border-blue-500 focus:outline-none bg-white"
-                  maxLength={1}
-                  inputMode="numeric"
-                  autoFocus
-                />
+              {/* Ones */}
+              <div className="p-4 text-center flex flex-col items-center justify-center gap-1">
+                <button
+                  type="button"
+                  className="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full hover:bg-blue-200 mb-1"
+                  onClick={() => handleDigitChange(onesInput, setOnesInput, 'up')}
+                  tabIndex={-1}
+                  aria-label="Increase ones"
+                >
+                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+                </button>
+                <div className="w-12 h-12 border-2 border-gray-400 rounded flex items-center justify-center bg-white text-2xl font-bold select-none">
+                  {onesInput || ''}
+                </div>
+                <button
+                  type="button"
+                  className="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full hover:bg-blue-200 mt-1"
+                  onClick={() => handleDigitChange(onesInput, setOnesInput, 'down')}
+                  tabIndex={-1}
+                  aria-label="Decrease ones"
+                >
+                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
               </div>
             </div>
           </div>
